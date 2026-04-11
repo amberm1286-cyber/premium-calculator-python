@@ -1,233 +1,488 @@
 import tkinter as tk
+from tkinter import messagebox
 import math
+import re
 
 root = tk.Tk()
 root.title("Premium Calculator")
-root.geometry("360x650")
+root.geometry("420x760")
 root.configure(bg="black")
 
-memory = 0
+memory = 0.0
 is_degree = True
+dark_mode = True
 
 # -------- DISPLAY --------
-entry = tk.Entry(root, font=("Arial", 24), bg="black", fg="white", bd=0, justify="right")
-entry.grid(row=0, column=0, columnspan=5, sticky="nsew", padx=10, pady=10, ipady=10)
+entry = tk.Entry(
+    root,
+    font=("Arial", 24),
+    bg="black",
+    fg="white",
+    bd=0,
+    justify="right",
+    insertbackground="white",
+)
+entry.grid(row=0, column=0, columnspan=5, sticky="nsew", padx=10, pady=(10, 6), ipady=10)
 
-history_box = tk.Text(root, height=4, bg="black", fg="gray", bd=0)
-history_box.grid(row=1, column=0, columnspan=5, sticky="nsew")
+# -------- HISTORY --------
+history_frame = tk.Frame(root, bg="black")
+history_frame.grid(row=1, column=0, columnspan=5, sticky="nsew", padx=10, pady=(0, 8))
 
-# -------- SAFE EVAL --------
-def safe_eval(expr):
-    allowed = "0123456789+-*/(). "
-    for c in expr:
-        if c not in allowed:
-            raise Exception("Invalid")
-    return eval(expr)
+history_box = tk.Text(
+    history_frame,
+    height=5,
+    bg="black",
+    fg="gray",
+    bd=0,
+    wrap="word",
+    font=("Arial", 10),
+)
+history_scroll = tk.Scrollbar(history_frame, command=history_box.yview)
+history_box.configure(yscrollcommand=history_scroll.set)
 
-# -------- BASIC --------
-def click(val):
-    current = entry.get()
-    if val == ".":
-        if "." in current.split()[-1]:
-            return
-    entry.insert(tk.END, val)
+history_box.pack(side="left", fill="both", expand=True)
+history_scroll.pack(side="right", fill="y")
+
+history_visible = True
+
+# -------- HELPERS --------
+def add_history(text: str) -> None:
+    history_box.insert("end", text + "\n")
+    history_box.see("end")
+
+def get_entry_text() -> str:
+    return entry.get().strip()
+
+def set_entry(value: str) -> None:
+    entry.delete(0, tk.END)
+    entry.insert(0, value)
+
+def append_text(value: str) -> None:
+    entry.insert(tk.END, value)
 
 def clear():
     entry.delete(0, tk.END)
 
 def backspace():
-    entry.delete(len(entry.get())-1, tk.END)
+    current = entry.get()
+    if current:
+        entry.delete(len(current) - 1, tk.END)
 
-def equal():
-    try:
-        expr = entry.get()
-        result = safe_eval(expr)
-        history_box.insert(tk.END, f"{expr} = {result}\n")
-        entry.delete(0, tk.END)
-        entry.insert(0, result)
-    except:
-        entry.delete(0, tk.END)
-        entry.insert(0, "Error")
-
-# -------- MEMORY --------
-def m_plus():
-    global memory
-    try:
-        memory += float(entry.get())
-    except:
-        pass
-
-def m_minus():
-    global memory
-    try:
-        memory -= float(entry.get())
-    except:
-        pass
-
-def m_recall():
-    entry.delete(0, tk.END)
-    entry.insert(0, memory)
-
-def m_clear():
-    global memory
-    memory = 0
-
-# -------- SAVE --------
-def save_history():
-    with open("history.txt", "w") as f:
-        f.write(history_box.get("1.0", tk.END))
-
-# -------- HISTORY TOGGLE --------
 def toggle_history():
-    if history_box.winfo_viewable():
-        history_box.grid_remove()
+    global history_visible
+    if history_visible:
+        history_frame.grid_remove()
     else:
-        history_box.grid()
+        history_frame.grid()
+    history_visible = not history_visible
 
-# -------- FUNCTIONS --------
-def sin_func():
-    val = float(entry.get())
-    if is_degree:
-        val = math.radians(val)
-    res = math.sin(val)
-    entry.delete(0, tk.END)
-    entry.insert(0, round(res,6))
-    history_box.insert(tk.END, f"sin = {res}\n")
-
-def cos_func():
-    val = float(entry.get())
-    if is_degree:
-        val = math.radians(val)
-    res = math.cos(val)
-    entry.delete(0, tk.END)
-    entry.insert(0, round(res,6))
-    history_box.insert(tk.END, f"cos = {res}\n")
-
-def tan_func():
-    val = float(entry.get())
-    if is_degree:
-        val = math.radians(val)
-    res = math.tan(val)
-    entry.delete(0, tk.END)
-    entry.insert(0, round(res,6))
-    history_box.insert(tk.END, f"tan = {res}\n")
-
-def log_func():
-    val = float(entry.get())
-    res = math.log10(val)
-    entry.delete(0, tk.END)
-    entry.insert(0, res)
-
-def ln_func():
-    val = float(entry.get())
-    entry.delete(0, tk.END)
-    entry.insert(0, math.log(val))
-
-def sqrt_func():
-    val = float(entry.get())
-    entry.delete(0, tk.END)
-    entry.insert(0, math.sqrt(val))
-
-def square_func():
-    val = float(entry.get())
-    entry.delete(0, tk.END)
-    entry.insert(0, val**2)
-
-def cube_func():
-    val = float(entry.get())
-    entry.delete(0, tk.END)
-    entry.insert(0, val**3)
-
-def cbrt_func():
-    val = float(entry.get())
-    entry.delete(0, tk.END)
-    entry.insert(0, val**(1/3))
-
-def power_func():
-    click("**")
-
-def percent_func():
-    val = float(entry.get())
-    entry.delete(0, tk.END)
-    entry.insert(0, val/100)
-
-def sign_func():
-    val = float(entry.get())
-    entry.delete(0, tk.END)
-    entry.insert(0, -val)
-
-def factorial_func():
-    val = int(float(entry.get()))
-    entry.delete(0, tk.END)
-    entry.insert(0, math.factorial(val))
+def save_history():
+    try:
+        with open("history.txt", "w", encoding="utf-8") as f:
+            f.write(history_box.get("1.0", tk.END))
+        messagebox.showinfo("Saved", "History saved to history.txt")
+    except Exception as e:
+        messagebox.showerror("Error", f"Could not save history:\n{e}")
 
 def toggle_mode():
     global is_degree
     is_degree = not is_degree
     mode_btn.config(text="DEG" if is_degree else "RAD")
 
+def toggle_theme():
+    global dark_mode
+    dark_mode = not dark_mode
+
+    if dark_mode:
+        bg_root = "black"
+        bg_display = "black"
+        fg_display = "white"
+        bg_history = "black"
+        fg_history = "gray"
+        bg_top = "#666666"
+        fg_top = "white"
+        bg_main = "#2e2e2e"
+        fg_main = "white"
+        bg_op = "orange"
+        bg_eq = "green"
+        insert_bg = "white"
+    else:
+        bg_root = "#f4f4f4"
+        bg_display = "white"
+        fg_display = "black"
+        bg_history = "#eeeeee"
+        fg_history = "black"
+        bg_top = "#c7c7c7"
+        fg_top = "black"
+        bg_main = "#dddddd"
+        fg_main = "black"
+        bg_op = "#e69500"
+        bg_eq = "#0a9f2e"
+        insert_bg = "black"
+
+    root.configure(bg=bg_root)
+    history_frame.configure(bg=bg_root)
+    history_box.configure(bg=bg_history, fg=fg_history)
+    entry.configure(bg=bg_display, fg=fg_display, insertbackground=insert_bg)
+
+    for btn in top_buttons:
+        btn.configure(bg=bg_top, fg=fg_top)
+
+    for btn in main_buttons:
+        btn.configure(bg=bg_main, fg=fg_main)
+
+    for btn in op_buttons:
+        btn.configure(bg=bg_op, fg="white")
+
+    equal_btn.configure(bg=bg_eq, fg="white")
+
+# -------- EXPRESSION PARSING --------
+def preprocess_expression(expr: str) -> str:
+    expr = expr.replace("÷", "/").replace("×", "*")
+    expr = expr.replace("π", str(math.pi))
+
+    # Replace standalone percentage like 50% -> (50/100)
+    expr = re.sub(r'(\d+(\.\d+)?)%', r'(\1/100)', expr)
+
+    return expr
+
+def safe_eval(expr: str):
+    expr = preprocess_expression(expr)
+    allowed = set("0123456789+-*/(). ")
+    if not all(ch in allowed for ch in expr):
+        raise ValueError("Invalid characters in expression")
+    return eval(expr, {"__builtins__": {}}, {})
+
+# -------- BASIC --------
+def click(val: str):
+    current = entry.get()
+
+    if val == ".":
+        parts = re.split(r"[+\-*/()]", current)
+        if parts and "." in parts[-1]:
+            return
+
+    append_text(val)
+
+def equal():
+    try:
+        expr = get_entry_text()
+        if not expr:
+            return
+        result = safe_eval(expr)
+        add_history(f"{expr} = {result}")
+        set_entry(str(result))
+    except Exception:
+        set_entry("Error")
+
+# -------- MEMORY --------
+def m_plus():
+    global memory
+    try:
+        memory += float(preprocess_expression(get_entry_text()))
+    except Exception:
+        pass
+
+def m_minus():
+    global memory
+    try:
+        memory -= float(preprocess_expression(get_entry_text()))
+    except Exception:
+        pass
+
+def m_recall():
+    set_entry(str(memory))
+
+def m_clear():
+    global memory
+    memory = 0.0
+
+# -------- SCIENTIFIC --------
+def current_value():
+    text = preprocess_expression(get_entry_text())
+    return float(text)
+
+def sin_func():
+    try:
+        val = current_value()
+        shown = val
+        if is_degree:
+            val = math.radians(val)
+        res = round(math.sin(val), 10)
+        set_entry(str(res))
+        add_history(f"sin({shown}{'°' if is_degree else ''}) = {res}")
+    except Exception:
+        set_entry("Error")
+
+def cos_func():
+    try:
+        val = current_value()
+        shown = val
+        if is_degree:
+            val = math.radians(val)
+        res = round(math.cos(val), 10)
+        set_entry(str(res))
+        add_history(f"cos({shown}{'°' if is_degree else ''}) = {res}")
+    except Exception:
+        set_entry("Error")
+
+def tan_func():
+    try:
+        val = current_value()
+        shown = val
+        if is_degree:
+            val = math.radians(val)
+        res = round(math.tan(val), 10)
+        set_entry(str(res))
+        add_history(f"tan({shown}{'°' if is_degree else ''}) = {res}")
+    except Exception:
+        set_entry("Error")
+
+def log_func():
+    try:
+        val = current_value()
+        if val <= 0:
+            raise ValueError
+        res = round(math.log10(val), 10)
+        set_entry(str(res))
+        add_history(f"log({val}) = {res}")
+    except Exception:
+        set_entry("Error")
+
+def ln_func():
+    try:
+        val = current_value()
+        if val <= 0:
+            raise ValueError
+        res = round(math.log(val), 10)
+        set_entry(str(res))
+        add_history(f"ln({val}) = {res}")
+    except Exception:
+        set_entry("Error")
+
+def sqrt_func():
+    try:
+        val = current_value()
+        if val < 0:
+            raise ValueError
+        res = round(math.sqrt(val), 10)
+        set_entry(str(res))
+        add_history(f"√({val}) = {res}")
+    except Exception:
+        set_entry("Error")
+
+def square_func():
+    try:
+        val = current_value()
+        res = round(val ** 2, 10)
+        set_entry(str(res))
+        add_history(f"{val}² = {res}")
+    except Exception:
+        set_entry("Error")
+
+def cube_func():
+    try:
+        val = current_value()
+        res = round(val ** 3, 10)
+        set_entry(str(res))
+        add_history(f"{val}³ = {res}")
+    except Exception:
+        set_entry("Error")
+
+def cbrt_func():
+    try:
+        val = current_value()
+        res = round(math.copysign(abs(val) ** (1 / 3), val), 10)
+        set_entry(str(res))
+        add_history(f"∛({val}) = {res}")
+    except Exception:
+        set_entry("Error")
+
+def power_func():
+    append_text("**")
+
+def percent_func():
+    try:
+        val = current_value()
+        res = round(val / 100, 10)
+        set_entry(str(res))
+        add_history(f"{val}% = {res}")
+    except Exception:
+        set_entry("Error")
+
+def sign_func():
+    try:
+        val = current_value()
+        set_entry(str(-val))
+    except Exception:
+        set_entry("Error")
+
+def reciprocal_func():
+    try:
+        val = current_value()
+        if val == 0:
+            raise ValueError
+        res = round(1 / val, 10)
+        set_entry(str(res))
+        add_history(f"1/({val}) = {res}")
+    except Exception:
+        set_entry("Error")
+
+def exp_func():
+    try:
+        val = current_value()
+        res = round(math.exp(val), 10)
+        set_entry(str(res))
+        add_history(f"exp({val}) = {res}")
+    except Exception:
+        set_entry("Error")
+
+def factorial_func():
+    try:
+        val = current_value()
+        if val < 0 or int(val) != val:
+            raise ValueError
+        n = int(val)
+        res = math.factorial(n)
+        set_entry(str(res))
+        add_history(f"{n}! = {res}")
+    except Exception:
+        set_entry("Error")
+
+def insert_pi():
+    append_text("π")
+
+# -------- KEYBOARD SHORTCUTS --------
+def on_keypress(event):
+    key = event.keysym
+    char = event.char
+
+    if char and char in "0123456789":
+        click(char)
+        return "break"
+
+    if char in "+-*/().":
+        click(char)
+        return "break"
+
+    if char == "%":
+        percent_func()
+        return "break"
+
+    if key == "Return":
+        equal()
+        return "break"
+
+    if key == "BackSpace":
+        backspace()
+        return "break"
+
+    if key == "Escape":
+        clear()
+        return "break"
+
+    if char.lower() == "s":
+        sin_func()
+        return "break"
+
+    if char.lower() == "c":
+        cos_func()
+        return "break"
+
+    if char.lower() == "t":
+        tan_func()
+        return "break"
+
+    if char.lower() == "l":
+        log_func()
+        return "break"
+
+    if char.lower() == "n":
+        ln_func()
+        return "break"
+
+    if char.lower() == "r":
+        sqrt_func()
+        return "break"
+
+    if char.lower() == "p":
+        insert_pi()
+        return "break"
+
+    if char == "!":
+        factorial_func()
+        return "break"
+
+root.bind("<Key>", on_keypress)
+
 # -------- BUTTON STYLE --------
-def create_button(text, cmd, row, col, bg="#333"):
-    btn = tk.Button(root, text=text, command=cmd, bg=bg, fg="white",
-                    font=("Arial", 12), bd=0)
+top_buttons = []
+main_buttons = []
+op_buttons = []
 
-    btn.bind("<Enter>", lambda e: btn.config(bg="#555"))
-    btn.bind("<Leave>", lambda e: btn.config(bg=bg))
-
+def make_button(text, cmd, row, col, bg="#2e2e2e", fg="white", top=False, op=False):
+    btn = tk.Button(
+        root,
+        text=text,
+        command=cmd,
+        bg=bg,
+        fg=fg,
+        font=("Arial", 12),
+        bd=0,
+        activebackground="#555555",
+        activeforeground="white",
+    )
     btn.grid(row=row, column=col, sticky="nsew", padx=3, pady=3)
 
-# -------- TOP ROW --------
-mode_btn = tk.Button(root, text="DEG", command=toggle_mode)
-mode_btn.grid(row=2, column=0)
+    if top:
+        top_buttons.append(btn)
+    elif op:
+        op_buttons.append(btn)
+    else:
+        main_buttons.append(btn)
 
-create_button("⌫", backspace, 2,1)
-create_button("AC", clear, 2,2)
-create_button("HIS", toggle_history, 2,3)
-create_button("SAVE", save_history, 2,4)
+    return btn
+
+# -------- TOP ROW --------
+mode_btn = make_button("DEG", toggle_mode, 2, 0, bg="#666666", top=True)
+make_button("⌫", backspace, 2, 1, bg="#666666", top=True)
+make_button("AC", clear, 2, 2, bg="#666666", top=True)
+make_button("HIS", toggle_history, 2, 3, bg="#666666", top=True)
+make_button("SAVE", save_history, 2, 4, bg="#666666", top=True)
 
 # -------- MEMORY ROW --------
-create_button("MC", m_clear, 3,0)
-create_button("M+", m_plus, 3,1)
-create_button("M-", m_minus, 3,2)
-create_button("MR", m_recall, 3,3)
-create_button("=", equal, 3,4, "#ff9500")
+make_button("MC", m_clear, 3, 0, bg="#666666", top=True)
+make_button("M+", m_plus, 3, 1, bg="#666666", top=True)
+make_button("M-", m_minus, 3, 2, bg="#666666", top=True)
+make_button("MR", m_recall, 3, 3, bg="#666666", top=True)
+equal_btn = make_button("=", equal, 3, 4, bg="#ff9500", op=True)
 
-# -------- NUMBERS --------
-buttons = [
-("7",4,0),("8",4,1),("9",4,2),("/",4,3),
-("4",5,0),("5",5,1),("6",5,2),("*",5,3),
-("1",6,0),("2",6,1),("3",6,2),("-",6,3),
-("0",7,0),(".",7,1),("00",7,2),("+",7,3)
+# -------- MAIN GRID --------
+main_layout = [
+    [("7", lambda: click("7")), ("8", lambda: click("8")), ("9", lambda: click("9")), ("÷", lambda: click("/")), ("%", percent_func)],
+    [("4", lambda: click("4")), ("5", lambda: click("5")), ("6", lambda: click("6")), ("×", lambda: click("*")), ("√", sqrt_func)],
+    [("1", lambda: click("1")), ("2", lambda: click("2")), ("3", lambda: click("3")), ("−", lambda: click("-")), ("x²", square_func)],
+    [("0", lambda: click("0")), ("00", lambda: click("00")), (".", lambda: click(".")), ("+", lambda: click("+")), ("x³", cube_func)],
+    [("(", lambda: click("(")), (")", lambda: click(")")), ("π", insert_pi), ("∛", cbrt_func), ("xʸ", power_func)],
+    [("sin", sin_func), ("cos", cos_func), ("tan", tan_func), ("log", log_func), ("ln", ln_func)],
+    [("1/x", reciprocal_func), ("±", sign_func), ("x!", factorial_func), ("EXP", exp_func), ("☀️", toggle_theme)],
 ]
 
-for (t,r,c) in buttons:
-    create_button(t, lambda x=t: click(x), r, c)
+start_row = 4
+for r, row_data in enumerate(main_layout, start=start_row):
+    for c, (text, cmd) in enumerate(row_data):
+        is_op = text in {"÷", "×", "−", "+", "="}
+        bg = "#ff9500" if is_op else "#2e2e2e"
+        make_button(text, cmd, r, c, bg=bg, op=is_op)
 
-# -------- SCI --------
-create_button("sin", sin_func,8,0)
-create_button("cos", cos_func,8,1)
-create_button("tan", tan_func,8,2)
-create_button("log", log_func,8,3)
-
-create_button("ln", ln_func,9,0)
-create_button("√", sqrt_func,9,1)
-create_button("x²", square_func,9,2)
-create_button("π", lambda: click(str(math.pi)),9,3)
-
-create_button("x³", cube_func,10,0)
-create_button("∛", cbrt_func,10,1)
-create_button("xʸ", power_func,10,2)
-create_button("%", percent_func,10,3)
-
-create_button("±", sign_func,11,0)
-create_button("x!", factorial_func,11,1)
-create_button("(", lambda: click("("),11,2)
-create_button(")", lambda: click(")"),11,3)
-
-# -------- GRID --------
-for i in range(12):
+# -------- GRID CONFIG --------
+for i in range(11):
     root.grid_rowconfigure(i, weight=1)
+
 for j in range(5):
     root.grid_columnconfigure(j, weight=1)
+
+# Start hidden history toggle state if desired:
+# toggle_history()
 
 root.mainloop()
