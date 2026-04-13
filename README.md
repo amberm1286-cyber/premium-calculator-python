@@ -106,7 +106,7 @@ Go to the folder where your file is saved.
 
 #### On Windows (Command Prompt / PowerShell):
 
-'''bash
+```bash
 python calculator_gui.py
 
 ### OR 
