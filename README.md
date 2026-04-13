@@ -108,11 +108,9 @@ Go to the folder where your file is saved.
 
 ```bash
 python calculator_gui.py
-
-### OR 
-
-Bash
+OR
 py calculator_gui.py
+```again
 
 
 
