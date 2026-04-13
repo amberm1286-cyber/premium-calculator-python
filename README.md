@@ -112,6 +112,16 @@ OR
 py calculator_gui.py
 ```
 
+#### In VS Code:
+
+1. Open the project folder
+2. Open Terminal
+3. Run:
+
+```bash
+python calculator_gui.py
+```
+
 
 
 
