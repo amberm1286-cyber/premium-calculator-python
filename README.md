@@ -122,6 +122,28 @@ py calculator_gui.py
 python calculator_gui.py
 ```
 
+---
+
+## Project Highlights
+- Built a full scientific calculator using Tkinter
+- Implemented memory and history systems
+- Added keyboard interaction support
+- Designed a modern UI inspired by real-world apps
+- Focused on usability and clean structure
+
+---
+
+## Author
+- Amber Mahajan
+
+--- 
+
+## Future Improvements
+- Voice input version (advanced build)
+- Convert to executable (.exe)
+- Web version deployment
+- Mobile app version
+
 
 
 
