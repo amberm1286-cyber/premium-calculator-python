@@ -3,6 +3,12 @@ A modern and fully functional scientific calculator built using Python and Tkint
 
 ---
 
+## Live Demo
+
+[Open the Website Calculator](https://amberm1286-cyber.github.io/premium-calculator-python/)
+
+---
+
 ## Demo
 
 ### Main Demo
@@ -15,7 +21,6 @@ A modern and fully functional scientific calculator built using Python and Tkint
 ![UI Layout](ui-layout.png)
 
 ---
-
 
 ## Features
 
@@ -94,12 +99,23 @@ A modern and fully functional scientific calculator built using Python and Tkint
 ## Technologies Used
 - Python
 - Tkinter (GUI Library)
+- HTML
+- CSS
+- JavaScript
 
 ---
 
 ## Project Structure
-- calculator_gui.py → Main application file
-- history.txt → Saved calculation history
+- calculator_gui.py → Main Python calculator application  
+- index.html → Website structure  
+- style.css → Website styling  
+- script.js → Website logic (calculator functionality)  
+- history.txt → Saved calculation history (auto-generated)  
+- main-demo.png → Main UI screenshot  
+- light-mode.png → Light theme screenshot
+- ui-layout.png → UI Layout screenshot
+- icon.ico → Application icon for EXE  
+- README.md → Project documentation
 
 ---
 
@@ -136,14 +152,17 @@ py calculator_gui.py
 python calculator_gui.py
 ```
 
+#### Website Version
+
+Open index.html in your browser or use the live demo link above.
+
 ---
 
 ## Project Highlights
-- Built a full scientific calculator using Tkinter
-- Implemented memory and history systems
-- Added keyboard interaction support
-- Designed a modern UI inspired by real-world apps
-- Focused on usability and clean structure
+- Built both a Python desktop calculator and a live website calculator
+- Implemented scientific functions, memory system, history tracking, and keyboard shortcuts
+- Added a polished UI with theme support and responsive layout
+- Created a downloadable EXE version for Windows
 
 ---
 
@@ -153,10 +172,10 @@ python calculator_gui.py
 --- 
 
 ## Future Improvements
-- Voice input version (advanced build)
-- Convert to executable (.exe)
-- Web version deployment
 - Mobile app version
+- Voice-input desktop build
+- Custom domain for live website
+- More advanced math functions
 
 
 
