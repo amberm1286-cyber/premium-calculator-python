@@ -1,5 +1,8 @@
 # Premium Scientific Calculator (Python)
-A modern and fully functional scientific calculator built using Python and Tkinter. This project features advanced mathematical operations, memory management, history tracking, keyboard shortcuts, and a polished user interface inspired by premium calculator designs.
+
+A modern, feature-rich scientific calculator built using **Python (Tkinter)** and a fully functional **web version (HTML, CSS, JavaScript)**.
+
+This project demonstrates strong fundamentals in **GUI development, frontend web development, and application packaging (EXE)** with a clean, premium user interface.
 
 ---
 
@@ -92,16 +95,14 @@ A modern and fully functional scientific calculator built using Python and Tkint
 - Light/dark mode toggle
 - Smooth hover animations
 - Clean and responsive grid layout
-- iPhone-inspired design
+- Responsive layout (mobile-friendly)
 
 ---
 
 ## Technologies Used
-- Python
-- Tkinter (GUI Library)
-- HTML
-- CSS
-- JavaScript
+- **Python (Tkinter)** → Desktop GUI  
+- **HTML, CSS, JavaScript** → Web version  
+- **PyInstaller** → EXE packaging  
 
 ---
 
@@ -156,13 +157,22 @@ python calculator_gui.py
 
 Open index.html in your browser or use the live demo link above.
 
+#### Download (EXE)
+
+- Download the latest version from Releases
+1. Download ZIP
+2. Extract files
+3. Run .exe file
+
 ---
 
 ## Project Highlights
-- Built both a Python desktop calculator and a live website calculator
-- Implemented scientific functions, memory system, history tracking, and keyboard shortcuts
-- Added a polished UI with theme support and responsive layout
-- Created a downloadable EXE version for Windows
+
+- Built both desktop and web versions
+- Implemented scientific + memory + history system
+- Created a downloadable EXE application
+- Designed a modern UI with theme support
+- Hosted live using GitHub Pages
 
 ---
 
@@ -172,11 +182,12 @@ Open index.html in your browser or use the live demo link above.
 --- 
 
 ## Future Improvements
-- Mobile app version
-- Voice-input desktop build
-- Custom domain for live website
-- More advanced math functions
 
+- Android (APK) version
+- Advanced math functions
+- Graph plotting
+- Voice input for desktop version
+- Custom domain hosting
 
 
 
