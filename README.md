@@ -3,6 +3,20 @@ A modern and fully functional scientific calculator built using Python and Tkint
 
 ---
 
+## Screenshots
+
+### Main Demo
+![Main Demo](main-demo.png)
+
+### Light Mode
+![Light Mode](light-mode.png)
+
+### UI Layout
+![UI Layout](ui-layout.png)
+
+---
+
+
 ## Features
 
 ### Basic Operations
