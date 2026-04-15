@@ -3,7 +3,7 @@ A modern and fully functional scientific calculator built using Python and Tkint
 
 ---
 
-## Screenshots
+## Demo
 
 ### Main Demo
 ![Main Demo](main-demo.png)
